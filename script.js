@@ -20,9 +20,13 @@ let scoreHTML="";
 
 if(match.score){
 
-match.score.forEach((s,i)=>{
+match.score.forEach(s=>{
 
-let team=match.teams ? match.teams[i] : "Team";
+let team=s.inning
+.replace("Inning 1","")
+.replace("Inning 2","")
+.replace(/,/g,"")
+.trim();
 
 scoreHTML+=`
 <p class="score">
