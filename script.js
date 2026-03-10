@@ -1,36 +1,40 @@
-const API = "https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
+const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
 
-async function loadMatches() {
+async function loadMatches(){
 
-const res = await fetch(API);
-const data = await res.json();
+const res=await fetch(API);
+const data=await res.json();
 
-const matches = data.data;
+const matches=data.data;
 
-const container = document.getElementById("matches");
+const container=document.getElementById("matches");
 
-container.innerHTML = "";
+container.innerHTML="";
 
-matches.forEach(match => {
+matches.forEach(match=>{
 
-const div = document.createElement("div");
-div.className = "match";
+const div=document.createElement("div");
+div.className="match";
 
-let scoreHTML = "";
+let scoreHTML="";
 
 if(match.score){
 
-match.score.forEach(s => {
+match.score.forEach(s=>{
 
-scoreHTML += `
-<p><b>${s.inning}</b> : ${s.r}/${s.w} (${s.o} overs)</p>
+let team=s.inning.split(" ")[0];
+
+scoreHTML+=`
+<p class="score">
+${team} : ${s.r}/${s.w} (${s.o} ov)
+</p>
 `;
 
 });
 
 }
 
-div.innerHTML = `
+div.innerHTML=`
 
 <h3>${match.name}</h3>
 
@@ -48,4 +52,4 @@ container.appendChild(div);
 
 loadMatches();
 
-setInterval(loadMatches, 20000);
+setInterval(loadMatches,20000);
