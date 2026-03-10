@@ -1,31 +1,46 @@
 async function loadMatches(){
 
-const url="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb&offset=0";
+const url="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb&offset=0"
+  ;const API="https://api.cricapi.com/v1/currentMatches?apikey=YOUR_API_KEY";
 
-const res=await fetch(url);
+async function loadMatches(){
+
+const res=await fetch(API);
 const data=await res.json();
+
+const matches=data.data;
 
 const container=document.getElementById("matches");
 
 container.innerHTML="";
 
-data.data.forEach(match=>{
+matches.forEach(match=>{
 
-let score="";
+const card=document.createElement("a");
 
-if(match.score){
-score=match.score[0].r + "/" + match.score[0].w + " (" + match.score[0].o + " ov)";
-}
+card.href="match.html?id="+match.id;
 
-container.innerHTML+=`
+card.innerHTML=`
 
-<div class="match">
+<div class="match-card">
+
 <h3>${match.name}</h3>
-<div class="score">${score}</div>
+
+<div class="team">
+<span>${match.teams[0]}</span>
+</div>
+
+<div class="team">
+<span>${match.teams[1]}</span>
+</div>
+
 <div class="status">${match.status}</div>
+
 </div>
 
 `;
+
+container.appendChild(card);
 
 });
 
@@ -33,4 +48,4 @@ container.innerHTML+=`
 
 loadMatches();
 
-setInterval(loadMatches,30000);
+setInterval(loadMatches,10000);
