@@ -1,59 +1,38 @@
-const API_KEY = "6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
+const API_KEY="YOUR_API_KEY";
 
-async function loadMatches(){
+function loadMatches(){
 
-let url =
-`https://api.cricapi.com/v1/currentMatches?apikey=${API_KEY}&offset=0`;
+fetch(`https://api.cricapi.com/v1/currentMatches?apikey=${API_KEY}&offset=0`)
+.then(response=>response.json())
+.then(data=>{
 
-let response = await fetch(url);
+const container=document.getElementById("matches");
+container.innerHTML="";
 
-let data = await response.json();
+data.data.forEach(match=>{
 
-let matchesHTML = "";
+let score="No score yet";
 
-data.data.forEach(match => {
-
-let score = "-";
-
-if(match.score && match.score.length > 0){
-
-score =
-match.score[0].r + "/" +
-match.score[0].w +
-" (" + match.score[0].o + " ov)";
-
+if(match.score && match.score.length>0){
+score=match.score[0].r+"/"+match.score[0].w+" ("+match.score[0].o+" ov)";
 }
 
-matchesHTML += `
+container.innerHTML+=`
 
 <div class="match-card">
-
-<h3>${match.name}</h3>
-
-<div class="team">
-<span>${match.teamInfo[0].name}</span>
-<span>${score}</span>
-</div>
-
-<div class="team">
-<span>${match.teamInfo[1].name}</span>
-<span></span>
-</div>
-
-<div class="status">
-${match.status}
-</div>
-
+<h2>${match.name}</h2>
+<p>Status: ${match.status}</p>
+<p>Score: ${score}</p>
 </div>
 
 `;
 
 });
 
-document.getElementById("matches").innerHTML = matchesHTML;
+});
 
 }
 
 loadMatches();
 
-setInterval(loadMatches,30000);
+setInterval(loadMatches,10000);
