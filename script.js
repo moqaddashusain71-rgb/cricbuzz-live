@@ -2,53 +2,59 @@ const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-9
 
 async function loadMatches(){
 
-const res=await fetch(API);
-const data=await res.json();
+const res = await fetch(API);
+const data = await res.json();
 
-const matches=data.data;
+const matches = data.data;
 
-const container=document.getElementById("matches");
+const container = document.getElementById("matches");
 
 container.innerHTML="";
 
-matches.forEach(match=>{
+matches.forEach(m=>{
 
-const div=document.createElement("div");
-div.className="match";
+let team1 = m.teams[0];
+let team2 = m.teams[1];
 
-let scoreHTML="";
+let score="";
 
-if(match.score){
+if(m.score){
 
-match.score.forEach(s=>{
-
-let team=s.inning
-.replace("Inning 1","")
-.replace("Inning 2","")
-.replace(/,/g,"")
-.trim();
-
-scoreHTML+=`
-<p class="score">
-${team} : ${s.r}/${s.w} (${s.o} ov)
-</p>
-`;
-
+m.score.forEach(s=>{
+score+=`${s.inning} : ${s.r}/${s.w} (${s.o} ov)<br>`;
 });
 
 }
 
-div.innerHTML=`
+let live="";
 
-<h3>${match.name}</h3>
+if(m.status.toLowerCase().includes("live")){
 
-${scoreHTML}
+live=`<span class="live">🔴 LIVE</span>`;
 
-<p class="status">${match.status}</p>
+}
+
+container.innerHTML+=`
+
+<div class="match">
+
+<h3>${team1} vs ${team2} ${live}</h3>
+
+<div class="score">
+
+${score}
+
+</div>
+
+<div class="status">
+
+${m.status}
+
+</div>
+
+</div>
 
 `;
-
-container.appendChild(div);
 
 });
 
@@ -56,4 +62,4 @@ container.appendChild(div);
 
 loadMatches();
 
-setInterval(loadMatches,20000);
+setInterval(loadMatches,5000);
