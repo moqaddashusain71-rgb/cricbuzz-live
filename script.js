@@ -22,15 +22,16 @@ if(m.score){
 
 m.score.forEach(s=>{
 
-let inningName = s.inning;
+let teamName="";
 
-// team names clean
-inningName = inningName.replace(team1,"").replace(team2,"").replace(",","").trim();
+if(s.inning.toLowerCase().includes(team1.toLowerCase())){
+teamName=team1;
+}else if(s.inning.toLowerCase().includes(team2.toLowerCase())){
+teamName=team2;
+}
 
-// final display
-scoreHTML += `
-${s.inning.includes(team1) ? team1 : team2} : ${s.r}/${s.w} (${s.o} ov)
-<br>
+scoreHTML+=`
+${teamName} : ${s.r}/${s.w} (${s.o} ov)<br>
 `;
 
 });
@@ -40,9 +41,7 @@ ${s.inning.includes(team1) ? team1 : team2} : ${s.r}/${s.w} (${s.o} ov)
 let live="";
 
 if(m.status.toLowerCase().includes("live")){
-
 live=`<span class="live">🔴 LIVE</span>`;
-
 }
 
 container.innerHTML+=`
@@ -52,15 +51,11 @@ container.innerHTML+=`
 <h3>${team1} vs ${team2} ${live}</h3>
 
 <div class="score">
-
 ${scoreHTML}
-
 </div>
 
 <div class="status">
-
 ${m.status}
-
 </div>
 
 </div>
