@@ -16,23 +16,24 @@ matches.forEach(m=>{
 let team1 = m.teams[0];
 let team2 = m.teams[1];
 
-let scoreHTML="";
+let team1Score="";
+let team2Score="";
 
 if(m.score){
 
 m.score.forEach(s=>{
 
-let teamName="";
-
 if(s.inning.toLowerCase().includes(team1.toLowerCase())){
-teamName=team1;
-}else if(s.inning.toLowerCase().includes(team2.toLowerCase())){
-teamName=team2;
+
+team1Score=`${team1} : ${s.r}/${s.w} (${s.o} ov)`;
+
 }
 
-scoreHTML+=`
-${teamName} : ${s.r}/${s.w} (${s.o} ov)<br>
-`;
+if(s.inning.toLowerCase().includes(team2.toLowerCase())){
+
+team2Score=`${team2} : ${s.r}/${s.w} (${s.o} ov)`;
+
+}
 
 });
 
@@ -41,7 +42,9 @@ ${teamName} : ${s.r}/${s.w} (${s.o} ov)<br>
 let live="";
 
 if(m.status.toLowerCase().includes("live")){
+
 live=`<span class="live">🔴 LIVE</span>`;
+
 }
 
 container.innerHTML+=`
@@ -51,11 +54,16 @@ container.innerHTML+=`
 <h3>${team1} vs ${team2} ${live}</h3>
 
 <div class="score">
-${scoreHTML}
+
+${team1Score}<br>
+${team2Score}
+
 </div>
 
 <div class="status">
+
 ${m.status}
+
 </div>
 
 </div>
