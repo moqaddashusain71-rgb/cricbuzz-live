@@ -1,7 +1,7 @@
 body{
   font-family: Arial, sans-serif;
-  background: #0b1e2d;
-  color: white;
+  background:#0b1e2d;
+  color:white;
   margin:0;
   text-align:center;
 }
@@ -22,11 +22,26 @@ h1{
   padding:15px;
   border-radius:10px;
   cursor:pointer;
-  transition: background 0.3s;
+  transition:0.3s;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
 .match:hover{
   background:#1d4c7a;
+}
+
+.team-logo{
+  width:40px;
+  height:40px;
+  object-fit:contain;
+  margin-right:10px;
+}
+
+.match-info{
+  flex:1;
+  text-align:left;
 }
 
 .live{
