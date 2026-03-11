@@ -1,54 +1,42 @@
-const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
+const RSS="https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.cricbuzz.com/cricket-news/rss");
 
-async function loadMatches(){
+async function loadNews(){
 
-try{
-
-const res = await fetch(API);
+const res = await fetch(RSS);
 const data = await res.json();
+
+const parser = new DOMParser();
+const xml = parser.parseFromString(data.contents,"text/xml");
+
+const items = xml.querySelectorAll("item");
 
 const container = document.getElementById("matches");
 
 container.innerHTML="";
 
-data.data.forEach(match=>{
+items.forEach((item,i)=>{
 
-let scores="";
+if(i<15){
 
-if(match.score){
-
-match.score.forEach(s=>{
-scores+=`${s.inning} : ${s.r}/${s.w} (${s.o} ov)<br>`;
-});
-
-}
+let title=item.querySelector("title").textContent;
+let link=item.querySelector("link").textContent;
 
 container.innerHTML+=`
 
 <div class="match">
 
-<h3>${match.name}</h3>
+<h3>${title}</h3>
 
-<div class="score">
-${scores}
-</div>
-
-<p>${match.status}</p>
+<a href="${link}" target="_blank">Read More</a>
 
 </div>
 
 `;
 
+}
+
 });
 
-}catch(err){
-
-document.getElementById("matches").innerHTML="Error loading matches";
-
 }
 
-}
-
-loadMatches();
-
-setInterval(loadMatches,5000);
+loadNews();
