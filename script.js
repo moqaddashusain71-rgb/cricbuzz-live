@@ -1,57 +1,42 @@
+const API_KEY = "6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
+
 async function loadMatches(){
   const container = document.getElementById("matches");
+
   try{
-    const res = await fetch("https://cricbuzz-live.vercel.app/v1/matches/live");
+    const res = await fetch(`https://api.cricapi.com/v1/currentMatches?apikey=${API_KEY}`);
     if(!res.ok) throw new Error("API not responding");
 
     const data = await res.json();
     container.innerHTML="";
 
-    if(!data?.typeMatches || data.typeMatches.length===0){
+    if(!data.data || data.data.length===0){
       container.innerHTML="No live matches right now";
       return;
     }
 
-    data.typeMatches.forEach(type=>{
-      type.seriesMatches.forEach(series=>{
-        if(!series.seriesAdWrapper) return;
+    data.data.forEach(match=>{
+      const team1 = match["team-1"];
+      const team2 = match["team-2"];
+      const score = match.score || "-";
+      const status = match.status || "Live";
 
-        series.seriesAdWrapper.matches.forEach(match=>{
-          const info = match.matchInfo;
-          const score = match.matchScore;
+      const div = document.createElement("div");
+      div.className="match";
 
-          const team1 = info.team1.teamName;
-          const team2 = info.team2.teamName;
+      div.innerHTML=`
+        <div class="match-info">
+          <strong>${team1} vs ${team2}</strong><br>
+          ${score}
+        </div>
+        <div class="live">${status}</div>
+      `;
 
-          const score1 = score?.team1Score?.inngs1?.runs || "-";
-          const wk1 = score?.team1Score?.inngs1?.wickets || "-";
-          const ov1 = score?.team1Score?.inngs1?.overs || "-";
+      div.onclick = ()=>{
+        window.location.href = `match.html?id=${match.unique_id}`;
+      }
 
-          const score2 = score?.team2Score?.inngs1?.runs || "-";
-          const wk2 = score?.team2Score?.inngs1?.wickets || "-";
-          const ov2 = score?.team2Score?.inngs1?.overs || "-";
-
-          const status = info.status;
-
-          const div = document.createElement("div");
-          div.className="match";
-
-          div.innerHTML=`
-            <div class="match-info">
-              <strong>${team1} vs ${team2}</strong><br>
-              ${score1}/${wk1} (${ov1} ov) | ${score2}/${wk2} (${ov2} ov)
-            </div>
-            <div class="live">${status}</div>
-          `;
-
-          div.onclick = ()=>{
-            // open match scorecard page with query param
-            window.location.href = `match.html?id=${info.id}`;
-          }
-
-          container.appendChild(div);
-        });
-      });
+      container.appendChild(div);
     });
 
   } catch(error){
@@ -60,5 +45,8 @@ async function loadMatches(){
   }
 }
 
+// Initial load
 loadMatches();
+
+// Auto refresh every 15 sec
 setInterval(loadMatches,15000);
