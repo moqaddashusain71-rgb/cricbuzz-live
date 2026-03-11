@@ -16,24 +16,18 @@ matches.forEach(m=>{
 let team1 = m.teams[0];
 let team2 = m.teams[1];
 
-let team1Score="";
-let team2Score="";
+let scoreHTML="";
 
 if(m.score){
 
 m.score.forEach(s=>{
 
-if(s.inning.toLowerCase().includes(team1.toLowerCase())){
+let teamName = s.inning.split(" ")[0];   // inning text से team name
 
-team1Score=`${team1} : ${s.r}/${s.w} (${s.o} ov)`;
-
-}
-
-if(s.inning.toLowerCase().includes(team2.toLowerCase())){
-
-team2Score=`${team2} : ${s.r}/${s.w} (${s.o} ov)`;
-
-}
+scoreHTML += `
+${teamName} : ${s.r}/${s.w} (${s.o} ov)
+<br>
+`;
 
 });
 
@@ -42,9 +36,7 @@ team2Score=`${team2} : ${s.r}/${s.w} (${s.o} ov)`;
 let live="";
 
 if(m.status.toLowerCase().includes("live")){
-
 live=`<span class="live">🔴 LIVE</span>`;
-
 }
 
 container.innerHTML+=`
@@ -55,8 +47,7 @@ container.innerHTML+=`
 
 <div class="score">
 
-${team1Score}<br>
-${team2Score}
+${scoreHTML}
 
 </div>
 
