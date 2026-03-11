@@ -16,15 +16,22 @@ matches.forEach(m=>{
 let team1 = m.teams[0];
 let team2 = m.teams[1];
 
-let score="";
+let scoreHTML="";
 
 if(m.score){
 
 m.score.forEach(s=>{
 
-let inning = s.inning.split(",")[0]; // fix team name issue
+let inningName = s.inning;
 
-score += `${inning} : ${s.r}/${s.w} (${s.o} ov)<br>`;
+// team names clean
+inningName = inningName.replace(team1,"").replace(team2,"").replace(",","").trim();
+
+// final display
+scoreHTML += `
+${s.inning.includes(team1) ? team1 : team2} : ${s.r}/${s.w} (${s.o} ov)
+<br>
+`;
 
 });
 
@@ -46,7 +53,7 @@ container.innerHTML+=`
 
 <div class="score">
 
-${score}
+${scoreHTML}
 
 </div>
 
