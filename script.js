@@ -1,55 +1,59 @@
-const API = "https://cricbuzz-cricket.p.rapidapi.com/matches/v1/live";
-
-async function loadMatches() {
+async function loadMatches(){
   const container = document.getElementById("matches");
 
-  try {
+  try{
     const res = await fetch("https://cricbuzz-live.vercel.app/v1/matches/live");
-    const data = await res.json();
+    if(!res.ok) throw new Error("API not responding");
 
+    const data = await res.json();
     container.innerHTML = "";
 
-    data.typeMatches.forEach(type => {
-      type.seriesMatches.forEach(series => {
-        if (!series.seriesAdWrapper) return;
+    if(!data?.typeMatches || data.typeMatches.length === 0){
+      container.innerHTML = "No live matches right now";
+      return;
+    }
 
-        series.seriesAdWrapper.matches.forEach(match => {
+    data.typeMatches.forEach(type=>{
+      type.seriesMatches.forEach(series=>{
+        if(!series.seriesAdWrapper) return;
+        series.seriesAdWrapper.matches.forEach(match=>{
           const info = match.matchInfo;
           const score = match.matchScore;
 
-          let team1 = info.team1.teamName;
-          let team2 = info.team2.teamName;
+          const team1 = info.team1.teamName;
+          const team2 = info.team2.teamName;
 
-          let score1 = score?.team1Score?.inngs1?.runs || "";
-          let wk1 = score?.team1Score?.inngs1?.wickets || "";
-          let ov1 = score?.team1Score?.inngs1?.overs || "";
+          const score1 = score?.team1Score?.inngs1?.runs || "-";
+          const wk1 = score?.team1Score?.inngs1?.wickets || "-";
+          const ov1 = score?.team1Score?.inngs1?.overs || "-";
 
-          let score2 = score?.team2Score?.inngs1?.runs || "";
-          let wk2 = score?.team2Score?.inngs1?.wickets || "";
-          let ov2 = score?.team2Score?.inngs1?.overs || "";
+          const score2 = score?.team2Score?.inngs1?.runs || "-";
+          const wk2 = score?.team2Score?.inngs1?.wickets || "-";
+          const ov2 = score?.team2Score?.inngs1?.overs || "-";
 
           const status = info.status;
 
           const div = document.createElement("div");
           div.className = "match";
-
           div.innerHTML = `
             <h3>${team1} vs ${team2}</h3>
-            <p>${score1}/${wk1} (${ov1})</p>
-            <p>${score2}/${wk2} (${ov2})</p>
-            <p>${status}</p>
+            <p>${score1}/${wk1} (${ov1} ov)</p>
+            <p>${score2}/${wk2} (${ov2} ov)</p>
+            <p class="live">${status}</p>
           `;
-
           container.appendChild(div);
         });
       });
     });
 
-  } catch (err) {
-    container.innerHTML = "Error loading matches";
-    console.log(err);
+  } catch(error){
+    container.innerHTML = "❌ API Error - Live score unavailable";
+    console.log("Fetch error:", error);
   }
 }
 
+// initial load
 loadMatches();
-setInterval(loadMatches, 30000);
+
+// auto refresh every 15 sec
+setInterval(loadMatches, 15000);
