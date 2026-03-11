@@ -1,42 +1,55 @@
-const RSS="https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.cricbuzz.com/cricket-news/rss");
+const API = "https://cricbuzz-cricket.p.rapidapi.com/matches/v1/live";
 
-async function loadNews(){
+async function loadMatches() {
+  const container = document.getElementById("matches");
 
-const res = await fetch(RSS);
-const data = await res.json();
+  try {
+    const res = await fetch("https://cricbuzz-live.vercel.app/v1/matches/live");
+    const data = await res.json();
 
-const parser = new DOMParser();
-const xml = parser.parseFromString(data.contents,"text/xml");
+    container.innerHTML = "";
 
-const items = xml.querySelectorAll("item");
+    data.typeMatches.forEach(type => {
+      type.seriesMatches.forEach(series => {
+        if (!series.seriesAdWrapper) return;
 
-const container = document.getElementById("matches");
+        series.seriesAdWrapper.matches.forEach(match => {
+          const info = match.matchInfo;
+          const score = match.matchScore;
 
-container.innerHTML="";
+          let team1 = info.team1.teamName;
+          let team2 = info.team2.teamName;
 
-items.forEach((item,i)=>{
+          let score1 = score?.team1Score?.inngs1?.runs || "";
+          let wk1 = score?.team1Score?.inngs1?.wickets || "";
+          let ov1 = score?.team1Score?.inngs1?.overs || "";
 
-if(i<15){
+          let score2 = score?.team2Score?.inngs1?.runs || "";
+          let wk2 = score?.team2Score?.inngs1?.wickets || "";
+          let ov2 = score?.team2Score?.inngs1?.overs || "";
 
-let title=item.querySelector("title").textContent;
-let link=item.querySelector("link").textContent;
+          const status = info.status;
 
-container.innerHTML+=`
+          const div = document.createElement("div");
+          div.className = "match";
 
-<div class="match">
+          div.innerHTML = `
+            <h3>${team1} vs ${team2}</h3>
+            <p>${score1}/${wk1} (${ov1})</p>
+            <p>${score2}/${wk2} (${ov2})</p>
+            <p>${status}</p>
+          `;
 
-<h3>${title}</h3>
+          container.appendChild(div);
+        });
+      });
+    });
 
-<a href="${link}" target="_blank">Read More</a>
-
-</div>
-
-`;
-
+  } catch (err) {
+    container.innerHTML = "Error loading matches";
+    console.log(err);
+  }
 }
 
-});
-
-}
-
-loadNews();
+loadMatches();
+setInterval(loadMatches, 30000);
