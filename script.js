@@ -1,21 +1,21 @@
 async function loadMatches(){
   const container = document.getElementById("matches");
-
   try{
     const res = await fetch("https://cricbuzz-live.vercel.app/v1/matches/live");
     if(!res.ok) throw new Error("API not responding");
 
     const data = await res.json();
-    container.innerHTML = "";
+    container.innerHTML="";
 
-    if(!data?.typeMatches || data.typeMatches.length === 0){
-      container.innerHTML = "No live matches right now";
+    if(!data?.typeMatches || data.typeMatches.length===0){
+      container.innerHTML="No live matches right now";
       return;
     }
 
     data.typeMatches.forEach(type=>{
       type.seriesMatches.forEach(series=>{
         if(!series.seriesAdWrapper) return;
+
         series.seriesAdWrapper.matches.forEach(match=>{
           const info = match.matchInfo;
           const score = match.matchScore;
@@ -34,26 +34,31 @@ async function loadMatches(){
           const status = info.status;
 
           const div = document.createElement("div");
-          div.className = "match";
-          div.innerHTML = `
-            <h3>${team1} vs ${team2}</h3>
-            <p>${score1}/${wk1} (${ov1} ov)</p>
-            <p>${score2}/${wk2} (${ov2} ov)</p>
-            <p class="live">${status}</p>
+          div.className="match";
+
+          div.innerHTML=`
+            <div class="match-info">
+              <strong>${team1} vs ${team2}</strong><br>
+              ${score1}/${wk1} (${ov1} ov) | ${score2}/${wk2} (${ov2} ov)
+            </div>
+            <div class="live">${status}</div>
           `;
+
+          div.onclick = ()=>{
+            // open match scorecard page with query param
+            window.location.href = `match.html?id=${info.id}`;
+          }
+
           container.appendChild(div);
         });
       });
     });
 
   } catch(error){
-    container.innerHTML = "❌ API Error - Live score unavailable";
+    container.innerHTML="❌ API Error - Live score unavailable";
     console.log("Fetch error:", error);
   }
 }
 
-// initial load
 loadMatches();
-
-// auto refresh every 15 sec
-setInterval(loadMatches, 15000);
+setInterval(loadMatches,15000);
