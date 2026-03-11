@@ -21,7 +21,11 @@ let score="";
 if(m.score){
 
 m.score.forEach(s=>{
-score+=`${s.inning} : ${s.r}/${s.w} (${s.o} ov)<br>`;
+
+let inning = s.inning.split(",")[0]; // fix team name issue
+
+score += `${inning} : ${s.r}/${s.w} (${s.o} ov)<br>`;
+
 });
 
 }
