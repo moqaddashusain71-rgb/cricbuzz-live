@@ -1,91 +1,49 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>PRO CRICKET LIVE</title>
 
 <style>
 
 body{
-font-family:Arial;
 background:#0f172a;
 color:white;
-margin:0;
-}
-
-header{
-background:#020617;
-padding:15px;
+font-family:Arial;
 text-align:center;
 }
 
-input{
-margin-top:10px;
-padding:8px;
-width:80%;
-border-radius:6px;
-border:none;
+h1{
+color:#22c55e;
 }
 
-.tabs{
-display:flex;
-justify-content:center;
-gap:10px;
+input{
 padding:10px;
+width:80%;
+margin:10px;
+border-radius:8px;
+border:none;
 }
 
 button{
-padding:8px 14px;
-border:none;
-border-radius:6px;
+padding:10px 15px;
+margin:5px;
 background:#1e293b;
 color:white;
-}
-
-#matches{
-padding:10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
 }
 
 .match{
 background:#1e293b;
+margin:10px;
 padding:15px;
-margin-bottom:10px;
 border-radius:10px;
 }
 
-.live-dot{
+.live{
 color:red;
-animation:blink 1s infinite;
-}
-
-@keyframes blink{
-50%{opacity:0;}
-}
-<div class="viewer">
-
-👥 LIVE VIEWERS
-
-</div>
-
-<style>
-
-.viewer{
-position:fixed;
-bottom:20px;
-right:20px;
-background:#020617;
-padding:10px 15px;
-border-radius:8px;
-font-size:14px;
-}
-
-</style>
-footer{
-text-align:center;
-padding:20px;
+font-weight:bold;
 }
 
 </style>
@@ -94,110 +52,71 @@ padding:20px;
 
 <body>
 
-<header>
-
 <h1>🏏 PRO CRICKET LIVE</h1>
 
-<input type="text" id="search" placeholder="Search team or match">
+<input id="search" placeholder="Search team or match">
 
-</header>
+<br>
 
-<div class="tabs">
+<button onclick="filter('live')">LIVE</button>
+<button onclick="filter('upcoming')">UPCOMING</button>
+<button onclick="filter('completed')">RESULT</button>
 
-<button onclick="showTab('live')">LIVE</button>
+<div id="matches"></div>
 
-<button onclick="showTab('upcoming')">UPCOMING</button>
-
-<button onclick="showTab('result')">RESULT</button>
-
-</div>
-
-<div id="matches">Loading matches...</div>
-
-<footer>
-
-<p>Visitors:</p>
-
-<a href="https://www.hitwebcounter.com/" target="_blank">
-<img src="https://hitwebcounter.com/counter/counter.php?page=21482304&style=0001&nbdigits=5&type=page&initCount=0" border="0" />
-</a>
-
-</footer>
+<p>Visitors: <span id="visit">0</span></p>
 
 <script>
 
-const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
+const API="https://api.cricapi.com/v1/currentMatches?apikey=00279dc951144e43b8413ac3ce36137e";
 
-let allMatches=[];
-let currentTab="live";
+let matches=[];
 
-async function loadMatches(){
+async function load(){
 
 const res=await fetch(API);
 const data=await res.json();
 
-allMatches=data.data;
+matches=data.data;
 
-renderMatches();
-
-}
-
-function renderMatches(){
-
-let html="";
-
-let search=document.getElementById("search").value.toLowerCase();
-
-allMatches.forEach(match=>{
-
-let team1=match.teams?.[0] || "";
-let team2=match.teams?.[1] || "";
-let status=match.status || "";
-
-let score="Match not started";
-
-if(match.score && match.score.length){
-
-score=match.score.map(s=>`${s.r}/${s.w} (${s.o} ov)`).join(" | ");
+show(matches);
 
 }
 
-let type="live";
+function show(list){
 
-let s=status.toLowerCase();
+const box=document.getElementById("matches");
+box.innerHTML="";
 
-if(
-s.includes("won") ||
-s.includes("result") ||
-s.includes("no result") ||
-s.includes("draw") ||
-s.includes("abandon")
-){
-type="result";
+if(list.length===0){
+box.innerHTML="No matches found";
+return;
 }
 
-else if(
-s.includes("start") ||
-s.includes("soon")
-){
-type="upcoming";
+list.forEach(m=>{
+
+let score="";
+
+if(m.score){
+
+let s1=m.score[0];
+let s2=m.score[1];
+
+score=
+(s1?.r||0)+"/"+(s1?.w||0)+" ("+(s1?.o||0)+" ov)"
++" | "+
+(s2?.r||0)+"/"+(s2?.w||0)+" ("+(s2?.o||0)+" ov)";
 }
 
-if(type!==currentTab) return;
-
-if(!(team1+" "+team2).toLowerCase().includes(search)) return;
-
-html+=`
+box.innerHTML+=`
 
 <div class="match">
 
-<h3>${team1} vs ${team2}</h3>
+<h3>${m.name}</h3>
 
-<p class="live-dot">🔴 ${type.toUpperCase()}</p>
+<p>${score}</p>
 
-<p>🏏 ${score}</p>
-
-<p>${status}</p>
+<p>${m.status}</p>
 
 </div>
 
@@ -205,48 +124,41 @@ html+=`
 
 });
 
-document.getElementById("matches").innerHTML=html || "No matches found";
+}
+
+function filter(type){
+
+let filtered=matches.filter(m=>m.matchType===type);
+
+show(filtered);
 
 }
 
-function showTab(tab){
+document.getElementById("search").addEventListener("input",function(){
 
-currentTab=tab;
+let text=this.value.toLowerCase();
 
-renderMatches();
+let filtered=matches.filter(m=>m.name.toLowerCase().includes(text));
 
-}
+show(filtered);
 
-document.getElementById("search").addEventListener("input",renderMatches);
+});
 
-loadMatches();
+load();
 
-setInterval(loadMatches,30000);
+setInterval(load,20000);
+
+let v=localStorage.getItem("visit");
+
+if(!v){v=0}
+
+v++;
+
+localStorage.setItem("visit",v);
+
+document.getElementById("visit").innerText=v;
 
 </script>
-<div id="livebar">
 
-🔴 LIVE CRICKET SCORE
-
-</div>
-
-<style>
-
-#livebar{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-background:#dc2626;
-color:white;
-text-align:center;
-padding:10px;
-font-weight:bold;
-font-size:18px;
-z-index:999;
-}
-
-</style>
 </body>
-
 </html>
