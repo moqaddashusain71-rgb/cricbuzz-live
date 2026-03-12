@@ -1,29 +1,28 @@
 body{
-
 font-family:Arial;
-
-background:#111;
-
+background:#0f172a;
 color:white;
-
 text-align:center;
+}
 
+h1{
+margin:20px;
 }
 
 .match{
-
-background:#1e1e1e;
-
-margin:10px;
-
+background:#1e293b;
+margin:12px;
 padding:15px;
-
-border-radius:10px;
-
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,0.5);
 }
 
-h3{
+.live{
+color:red;
+font-weight:bold;
+animation:blink 1s infinite;
+}
 
-color:#00ffcc;
-
+@keyframes blink{
+50%{opacity:0}
 }
