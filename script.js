@@ -1,32 +1,47 @@
 const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
 
-async function loadMatches(){
+let allMatches=[];
+let currentTab="live";
 
-try{
+async function loadMatches(){
 
 const res=await fetch(API);
 const data=await res.json();
 
-const matches=data.data;
+allMatches=data.data;
+
+renderMatches();
+
+}
+
+function renderMatches(){
 
 let html="";
 
-matches.forEach(match=>{
+let search=document.getElementById("search").value.toLowerCase();
 
-let team1 = match.teams?.[0] || "Team A";
-let team2 = match.teams?.[1] || "Team B";
+allMatches.forEach(match=>{
 
-let status = match.status || "Match starting soon";
+let team1=match.teams?.[0] || "";
+let team2=match.teams?.[1] || "";
+let status=match.status || "";
 
 let score="Match not started";
 
 if(match.score && match.score.length){
 
-score = match.score.map(s=>{
-return `${s.r}/${s.w} (${s.o} ov)`
-}).join(" | ");
+score=match.score.map(s=>`${s.r}/${s.w} (${s.o} ov)`).join(" | ");
 
 }
+
+let type="live";
+
+if(status.toLowerCase().includes("won")) type="result";
+if(status.toLowerCase().includes("start")) type="upcoming";
+
+if(type!==currentTab) return;
+
+if(!(team1+" "+team2).toLowerCase().includes(search)) return;
 
 html+=`
 
@@ -34,11 +49,11 @@ html+=`
 
 <h3>${team1} vs ${team2}</h3>
 
-<p class="live">🔴 LIVE</p>
+<p class="live-dot">🔴 ${type.toUpperCase()}</p>
 
-<p>🏏 Score: ${score}</p>
+<p>🏏 ${score}</p>
 
-<p>📢 Status: ${status}</p>
+<p>${status}</p>
 
 </div>
 
@@ -46,15 +61,19 @@ html+=`
 
 });
 
-document.getElementById("matches").innerHTML=html;
-
-}catch{
-
-document.getElementById("matches").innerHTML="⚠️ Error loading matches";
+document.getElementById("matches").innerHTML=html || "No matches found";
 
 }
 
+function showTab(tab){
+
+currentTab=tab;
+
+renderMatches();
+
 }
+
+document.getElementById("search").addEventListener("input",renderMatches);
 
 loadMatches();
 
