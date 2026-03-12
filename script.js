@@ -2,8 +2,9 @@ const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-9
 
 async function loadMatches(){
 
-const res=await fetch(API);
+try{
 
+const res=await fetch(API);
 const data=await res.json();
 
 const matches=data.data;
@@ -12,11 +13,18 @@ let html="";
 
 matches.forEach(match=>{
 
+let team1 = match.teams?.[0] || "Team A";
+let team2 = match.teams?.[1] || "Team B";
+
+let status = match.status || "Match starting soon";
+
 let score="Match not started";
 
-if(match.score && match.score.length>0){
+if(match.score && match.score.length){
 
-score=match.score[0].r+"/"+match.score[0].w+" ("+match.score[0].o+" ov)";
+score = match.score.map(s=>{
+return `${s.r}/${s.w} (${s.o} ov)`
+}).join(" | ");
 
 }
 
@@ -24,15 +32,13 @@ html+=`
 
 <div class="match">
 
-<h3>${match.name}</h3>
+<h3>${team1} vs ${team2}</h3>
 
-<p>🔴 ${match.status}</p>
+<p class="live">🔴 LIVE</p>
 
-<p>Score: ${score}</p>
+<p>🏏 Score: ${score}</p>
 
-<p>Top Scorer: Player1 0(0)</p>
-
-<p>Wickets: Bowler1 0/0</p>
+<p>📢 Status: ${status}</p>
 
 </div>
 
@@ -41,6 +47,12 @@ html+=`
 });
 
 document.getElementById("matches").innerHTML=html;
+
+}catch{
+
+document.getElementById("matches").innerHTML="⚠️ Error loading matches";
+
+}
 
 }
 
