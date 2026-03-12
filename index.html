@@ -5,9 +5,72 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Pro Cricket Live</title>
+<title>PRO CRICKET LIVE</title>
 
-<link rel="stylesheet" href="style.css">
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+}
+
+header{
+background:#020617;
+padding:15px;
+text-align:center;
+}
+
+input{
+margin-top:10px;
+padding:8px;
+width:80%;
+border-radius:6px;
+border:none;
+}
+
+.tabs{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:10px;
+}
+
+button{
+padding:8px 14px;
+border:none;
+border-radius:6px;
+background:#1e293b;
+color:white;
+}
+
+#matches{
+padding:10px;
+}
+
+.match{
+background:#1e293b;
+padding:15px;
+margin-bottom:10px;
+border-radius:10px;
+}
+
+.live-dot{
+color:red;
+animation:blink 1s infinite;
+}
+
+@keyframes blink{
+50%{opacity:0;}
+}
+
+footer{
+text-align:center;
+padding:20px;
+}
+
+</style>
 
 </head>
 
@@ -31,9 +94,118 @@
 
 </div>
 
-<div id="matches"></div>
+<div id="matches">Loading matches...</div>
 
-<script src="script.js"></script>
+<footer>
+
+<p>Visitors:</p>
+
+<a href="https://www.hitwebcounter.com/" target="_blank">
+<img src="https://hitwebcounter.com/counter/counter.php?page=21482304&style=0001&nbdigits=5&type=page&initCount=0" border="0" />
+</a>
+
+</footer>
+
+<script>
+
+const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
+
+let allMatches=[];
+let currentTab="live";
+
+async function loadMatches(){
+
+const res=await fetch(API);
+const data=await res.json();
+
+allMatches=data.data;
+
+renderMatches();
+
+}
+
+function renderMatches(){
+
+let html="";
+
+let search=document.getElementById("search").value.toLowerCase();
+
+allMatches.forEach(match=>{
+
+let team1=match.teams?.[0] || "";
+let team2=match.teams?.[1] || "";
+let status=match.status || "";
+
+let score="Match not started";
+
+if(match.score && match.score.length){
+
+score=match.score.map(s=>`${s.r}/${s.w} (${s.o} ov)`).join(" | ");
+
+}
+
+let type="live";
+
+let s=status.toLowerCase();
+
+if(
+s.includes("won") ||
+s.includes("result") ||
+s.includes("no result") ||
+s.includes("draw") ||
+s.includes("abandon")
+){
+type="result";
+}
+
+else if(
+s.includes("start") ||
+s.includes("soon")
+){
+type="upcoming";
+}
+
+if(type!==currentTab) return;
+
+if(!(team1+" "+team2).toLowerCase().includes(search)) return;
+
+html+=`
+
+<div class="match">
+
+<h3>${team1} vs ${team2}</h3>
+
+<p class="live-dot">🔴 ${type.toUpperCase()}</p>
+
+<p>🏏 ${score}</p>
+
+<p>${status}</p>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("matches").innerHTML=html || "No matches found";
+
+}
+
+function showTab(tab){
+
+currentTab=tab;
+
+renderMatches();
+
+}
+
+document.getElementById("search").addEventListener("input",renderMatches);
+
+loadMatches();
+
+setInterval(loadMatches,30000);
+
+</script>
 
 </body>
 
