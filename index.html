@@ -2,15 +2,36 @@
 <html>
 
 <head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Pro Cricket Live</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
+<header>
+
 <h1>🏏 PRO CRICKET LIVE</h1>
 
-<div id="matches">Loading matches...</div>
+<input type="text" id="search" placeholder="Search team or match">
+
+</header>
+
+<div class="tabs">
+
+<button onclick="showTab('live')">LIVE</button>
+
+<button onclick="showTab('upcoming')">UPCOMING</button>
+
+<button onclick="showTab('result')">RESULT</button>
+
+</div>
+
+<div id="matches"></div>
 
 <script src="script.js"></script>
 
