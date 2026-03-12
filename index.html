@@ -4,7 +4,6 @@
 <title>PRO CRICKET LIVE</title>
 
 <style>
-
 body{
 background:#0f172a;
 color:white;
@@ -47,7 +46,6 @@ font-weight:bold;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -58,9 +56,9 @@ font-weight:bold;
 
 <br>
 
-<button onclick="filter('live')">LIVE</button>
-<button onclick="filter('upcoming')">UPCOMING</button>
-<button onclick="filter('completed')">RESULT</button>
+<button onclick="filterMatches('live')">LIVE</button>
+<button onclick="filterMatches('upcoming')">UPCOMING</button>
+<button onclick="filterMatches('completed')">RESULT</button>
 
 <div id="matches"></div>
 
@@ -70,26 +68,26 @@ font-weight:bold;
 
 const API="https://api.cricapi.com/v1/currentMatches?apikey=00279dc951144e43b8413ac3ce36137e";
 
-let matches=[];
+let allMatches=[];
 
-async function load(){
+async function loadMatches(){
 
 const res=await fetch(API);
 const data=await res.json();
 
-matches=data.data;
+allMatches=data.data;
 
-show(matches);
+showMatches(allMatches);
 
 }
 
-function show(list){
+function showMatches(list){
 
 const box=document.getElementById("matches");
 box.innerHTML="";
 
-if(list.length===0){
-box.innerHTML="No matches found";
+if(!list || list.length===0){
+box.innerHTML="<p>No matches found</p>";
 return;
 }
 
@@ -97,7 +95,7 @@ list.forEach(m=>{
 
 let score="";
 
-if(m.score){
+if(m.score && m.score.length>0){
 
 let s1=m.score[0];
 let s2=m.score[1];
@@ -126,11 +124,19 @@ box.innerHTML+=`
 
 }
 
-function filter(type){
+function filterMatches(type){
 
-let filtered=matches.filter(m=>m.matchType===type);
+if(type==="live"){
+showMatches(allMatches.filter(m=>m.ms==="live"));
+}
 
-show(filtered);
+if(type==="upcoming"){
+showMatches(allMatches.filter(m=>m.ms==="fixture"));
+}
+
+if(type==="completed"){
+showMatches(allMatches.filter(m=>m.ms==="result"));
+}
 
 }
 
@@ -138,19 +144,17 @@ document.getElementById("search").addEventListener("input",function(){
 
 let text=this.value.toLowerCase();
 
-let filtered=matches.filter(m=>m.name.toLowerCase().includes(text));
+let filtered=allMatches.filter(m=>m.name.toLowerCase().includes(text));
 
-show(filtered);
+showMatches(filtered);
 
 });
 
-load();
+loadMatches();
 
-setInterval(load,20000);
+setInterval(loadMatches,20000);
 
-let v=localStorage.getItem("visit");
-
-if(!v){v=0}
+let v=localStorage.getItem("visit")||0;
 
 v++;
 
