@@ -1,58 +1,84 @@
 body{
-
-font-family:Arial;
+font-family: Arial, sans-serif;
 background:#0f172a;
 color:white;
 margin:0;
-
 }
 
-header{
+/* Header */
 
+header{
 background:#ff3d00;
 padding:15px;
 text-align:center;
-font-size:22px;
-
+font-size:24px;
+font-weight:bold;
+letter-spacing:1px;
 }
 
-.search-box{
+/* Navigation */
 
+nav{
+background:#020617;
 padding:10px;
 text-align:center;
+}
 
+nav a{
+color:white;
+margin:10px;
+text-decoration:none;
+font-weight:bold;
+}
+
+/* Search */
+
+.search-box{
+padding:12px;
+text-align:center;
 }
 
 .search-box input{
-
-padding:8px;
+padding:10px;
 width:80%;
 border-radius:8px;
 border:none;
-
+font-size:16px;
 }
+
+/* Matches */
 
 #matches{
-
 padding:15px;
-
 }
 
-.card{
+/* Match Card */
 
+.card{
 background:#1e293b;
 padding:15px;
 margin-bottom:15px;
-border-radius:10px;
-
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.4);
+transition:0.3s;
 }
 
-button{
+.card:hover{
+transform:scale(1.02);
+}
 
+/* Button */
+
+button{
 background:#ff3d00;
 border:none;
 color:white;
-padding:8px 12px;
+padding:8px 14px;
 border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
 
+button:hover{
+background:#ff5722;
 }
