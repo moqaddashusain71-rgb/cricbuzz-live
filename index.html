@@ -12,12 +12,12 @@ margin:0;
 font-family:Arial;
 background:#0f172a;
 color:white;
+text-align:center;
 }
 
 header{
 background:#020617;
 padding:15px;
-text-align:center;
 font-size:26px;
 color:#22c55e;
 font-weight:bold;
@@ -32,10 +32,6 @@ border:none;
 font-size:16px;
 }
 
-.tabs{
-text-align:center;
-}
-
 .tabs button{
 padding:10px 15px;
 margin:5px;
@@ -43,11 +39,6 @@ border:none;
 border-radius:6px;
 background:#1e293b;
 color:white;
-cursor:pointer;
-}
-
-.tabs button:hover{
-background:#22c55e;
 }
 
 .match{
@@ -55,6 +46,7 @@ background:#1e293b;
 margin:10px;
 padding:15px;
 border-radius:10px;
+text-align:left;
 }
 
 .match h3{
@@ -72,13 +64,7 @@ margin-top:5px;
 color:#facc15;
 }
 
-.live{
-color:red;
-font-weight:bold;
-}
-
 footer{
-text-align:center;
 margin:20px;
 opacity:0.7;
 }
@@ -91,9 +77,7 @@ opacity:0.7;
 
 <header>🏏 PRO CRICKET LIVE</header>
 
-<center>
 <input id="search" placeholder="Search team or match">
-</center>
 
 <div class="tabs">
 <button onclick="showMatches(matches)">ALL</button>
@@ -102,7 +86,7 @@ opacity:0.7;
 <button onclick="filterMatches('won')">RESULT</button>
 </div>
 
-<div id="matches"></div>
+<div id="matches">Loading matches...</div>
 
 <footer>
 Visitors: <span id="visit">0</span>
@@ -110,7 +94,7 @@ Visitors: <span id="visit">0</span>
 
 <script>
 
-const API="https://api.cricapi.com/v1/matches?apikey=00279dc951144e43b8413ac3ce36137e&offset=0";
+const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
 
 let matches=[];
 
