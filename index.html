@@ -1,201 +1,25 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>PRO CRICKET LIVE</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#0f172a;
-color:white;
-text-align:center;
-}
-
-header{
-background:#020617;
-padding:15px;
-font-size:26px;
-color:#22c55e;
-font-weight:bold;
-}
-
-#search{
-width:90%;
-padding:12px;
-margin:15px;
-border-radius:8px;
-border:none;
-font-size:16px;
-}
-
-.tabs button{
-padding:10px 15px;
-margin:5px;
-border:none;
-border-radius:6px;
-background:#1e293b;
-color:white;
-}
-
-.match{
-background:#1e293b;
-margin:10px;
-padding:15px;
-border-radius:10px;
-text-align:left;
-}
-
-.match h3{
-margin:0;
-color:#22c55e;
-}
-
-.score{
-font-size:18px;
-margin-top:5px;
-}
-
-.status{
-margin-top:5px;
-color:#facc15;
-}
-
-footer{
-margin:20px;
-opacity:0.7;
-}
-
-</style>
-
+<title>PRO Cricket Ultra</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>🏏 PRO CRICKET LIVE</header>
+<header>
+🏏 PRO CRICKET ULTRA
+</header>
 
+<div class="search-box">
 <input id="search" placeholder="Search team or match">
-
-<div class="tabs">
-<button onclick="showMatches(matches)">ALL</button>
-<button onclick="filterMatches('Live')">LIVE</button>
-<button onclick="filterMatches('Starts')">UPCOMING</button>
-<button onclick="filterMatches('won')">RESULT</button>
 </div>
 
-<div id="matches">Loading matches...</div>
+<h2>Live Matches</h2>
+<div id="matches"></div>
 
-<footer>
-Visitors: <span id="visit">0</span>
-</footer>
-
-<script>
-
-const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
-
-let matches=[];
-
-async function loadMatches(){
-
-try{
-
-const res=await fetch(API);
-const data=await res.json();
-
-matches=data.data || [];
-
-showMatches(matches);
-
-}catch{
-
-document.getElementById("matches").innerHTML="⚠️ Error loading matches";
-
-}
-
-}
-
-function showMatches(list){
-
-const box=document.getElementById("matches");
-
-box.innerHTML="";
-
-if(list.length===0){
-
-box.innerHTML="No matches available";
-
-return;
-
-}
-
-list.forEach(m=>{
-
-let score="";
-
-if(m.score && m.score.length){
-
-let s1=m.score[0];
-let s2=m.score[1];
-
-score =
-(s1?.r||0)+"/"+(s1?.w||0)+" ("+(s1?.o||0)+" ov)"
-+" | "+
-(s2?.r||0)+"/"+(s2?.w||0)+" ("+(s2?.o||0)+" ov)";
-
-}
-
-box.innerHTML+=`
-
-<div class="match">
-
-<h3>${m.name}</h3>
-
-<div class="score">${score}</div>
-
-<div class="status">${m.status}</div>
-
-</div>
-
-`;
-
-});
-
-}
-
-function filterMatches(type){
-
-let filtered=matches.filter(m=>m.status.includes(type));
-
-showMatches(filtered);
-
-}
-
-document.getElementById("search").addEventListener("input",function(){
-
-let text=this.value.toLowerCase();
-
-let filtered=matches.filter(m=>m.name.toLowerCase().includes(text));
-
-showMatches(filtered);
-
-});
-
-loadMatches();
-
-setInterval(loadMatches,30000);
-
-let v=localStorage.getItem("visit")||0;
-
-v++;
-
-localStorage.setItem("visit",v);
-
-document.getElementById("visit").innerText=v;
-
-</script>
+<script src="score.js"></script>
 
 </body>
 </html>
