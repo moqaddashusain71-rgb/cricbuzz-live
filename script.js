@@ -1,79 +1,83 @@
-const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
+const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb&offset=0";
 
-let allMatches=[];
-let currentTab="live";
+let matches=[];
 
 async function loadMatches(){
+
+const box=document.getElementById("matches");
+
+box.innerHTML="Loading matches...";
+
+try{
 
 const res=await fetch(API);
 const data=await res.json();
 
-allMatches=data.data || [];
+console.log(data);
 
-renderMatches();
+matches=data.data;
 
-}
+if(!matches || matches.length===0){
 
-function renderMatches(){
-
-let html="";
-let search=document.getElementById("search").value.toLowerCase();
-
-allMatches.forEach(match=>{
-
-let team1=match.teams && match.teams[0] ? match.teams[0] : "Team 1";
-let team2=match.teams && match.teams[1] ? match.teams[1] : "Team 2";
-let status=match.status || "Match not started";
-
-let score="";
-
-if(match.score){
-
-score=match.score.map(s=>`${s.r}/${s.w} (${s.o} ov)`).join(" | ");
+showDemo();
+return;
 
 }
 
-let type="live";
+showMatches(matches);
 
-if(status.includes("won") || status.includes("result")){
-type="result";
+}catch{
+
+showDemo();
+
 }
 
-if(status.includes("start")){
-type="upcoming";
 }
 
-if(type!==currentTab) return;
+function showMatches(list){
 
-if(!(team1+" "+team2).toLowerCase().includes(search)) return;
+const box=document.getElementById("matches");
 
-html+=`
+box.innerHTML="";
+
+list.forEach(m=>{
+
+box.innerHTML+=`
+
 <div class="match">
-<h3>${team1} vs ${team2}</h3>
-<p class="live-dot">🔴 ${type.toUpperCase()}</p>
-<p>🏏 ${score}</p>
-<p>${status}</p>
+
+<h3>${m.name}</h3>
+
+<div class="score">${m.status}</div>
+
 </div>
+
 `;
 
 });
 
-if(html===""){
-html="<p>No matches available</p>";
 }
 
-document.getElementById("matches").innerHTML=html;
+function showDemo(){
+
+const box=document.getElementById("matches");
+
+box.innerHTML=`
+
+<div class="match">
+<h3>India vs Australia</h3>
+<div class="score">Live match example</div>
+</div>
+
+<div class="match">
+<h3>England vs Pakistan</h3>
+<div class="score">Upcoming match example</div>
+</div>
+
+`;
 
 }
-
-function showTab(tab){
-
-currentTab=tab;
-renderMatches();
-
-}
-
-document.getElementById("search").addEventListener("input",renderMatches);
 
 loadMatches();
-setInterval(loadMatches,30000);
+
+setInterval(loadMatches,60000);
