@@ -8,66 +8,67 @@
 <style>
 
 body{
+margin:0;
+font-family:Arial;
 background:#0f172a;
 color:white;
-font-family:Arial;
-margin:0;
-padding:0;
-text-align:center;
 }
 
 header{
 background:#020617;
 padding:15px;
-font-size:28px;
-font-weight:bold;
+text-align:center;
+font-size:26px;
 color:#22c55e;
+font-weight:bold;
 }
 
 #search{
 width:90%;
-padding:14px;
+padding:12px;
 margin:15px;
-border-radius:10px;
+border-radius:8px;
 border:none;
 font-size:16px;
 }
 
 .tabs{
-margin-bottom:10px;
+text-align:center;
 }
 
 .tabs button{
-padding:12px 18px;
+padding:10px 15px;
 margin:5px;
 border:none;
-border-radius:8px;
-font-size:16px;
+border-radius:6px;
 background:#1e293b;
 color:white;
+cursor:pointer;
+}
+
+.tabs button:hover{
+background:#22c55e;
 }
 
 .match{
 background:#1e293b;
-margin:12px;
-padding:18px;
-border-radius:12px;
-text-align:left;
-font-size:16px;
+margin:10px;
+padding:15px;
+border-radius:10px;
 }
 
 .match h3{
 margin:0;
-font-size:18px;
 color:#22c55e;
 }
 
 .score{
-font-size:20px;
-margin:6px 0;
+font-size:18px;
+margin-top:5px;
 }
 
 .status{
+margin-top:5px;
 color:#facc15;
 }
 
@@ -77,8 +78,8 @@ font-weight:bold;
 }
 
 footer{
-margin-top:20px;
-font-size:14px;
+text-align:center;
+margin:20px;
 opacity:0.7;
 }
 
@@ -90,13 +91,15 @@ opacity:0.7;
 
 <header>🏏 PRO CRICKET LIVE</header>
 
+<center>
 <input id="search" placeholder="Search team or match">
+</center>
 
 <div class="tabs">
-<button onclick="showMatches(allMatches)">ALL</button>
-<button onclick="filterMatches('live')">LIVE</button>
-<button onclick="filterMatches('fixture')">UPCOMING</button>
-<button onclick="filterMatches('result')">RESULT</button>
+<button onclick="showMatches(matches)">ALL</button>
+<button onclick="filterMatches('Live')">LIVE</button>
+<button onclick="filterMatches('Starts')">UPCOMING</button>
+<button onclick="filterMatches('won')">RESULT</button>
 </div>
 
 <div id="matches"></div>
@@ -107,9 +110,9 @@ Visitors: <span id="visit">0</span>
 
 <script>
 
-const API="https://api.cricapi.com/v1/currentMatches?apikey=00279dc951144e43b8413ac3ce36137e";
+const API="https://api.cricapi.com/v1/matches?apikey=00279dc951144e43b8413ac3ce36137e&offset=0";
 
-let allMatches=[];
+let matches=[];
 
 async function loadMatches(){
 
@@ -118,13 +121,13 @@ try{
 const res=await fetch(API);
 const data=await res.json();
 
-allMatches=data.data || [];
+matches=data.data || [];
 
-showMatches(allMatches);
+showMatches(matches);
 
-}catch(e){
+}catch{
 
-document.getElementById("matches").innerHTML="Error loading matches";
+document.getElementById("matches").innerHTML="⚠️ Error loading matches";
 
 }
 
@@ -133,11 +136,13 @@ document.getElementById("matches").innerHTML="Error loading matches";
 function showMatches(list){
 
 const box=document.getElementById("matches");
+
 box.innerHTML="";
 
 if(list.length===0){
 
-box.innerHTML="<p>No matches available</p>";
+box.innerHTML="No matches available";
+
 return;
 
 }
@@ -151,10 +156,11 @@ if(m.score && m.score.length){
 let s1=m.score[0];
 let s2=m.score[1];
 
-score=
+score =
 (s1?.r||0)+"/"+(s1?.w||0)+" ("+(s1?.o||0)+" ov)"
 +" | "+
 (s2?.r||0)+"/"+(s2?.w||0)+" ("+(s2?.o||0)+" ov)";
+
 }
 
 box.innerHTML+=`
@@ -177,7 +183,7 @@ box.innerHTML+=`
 
 function filterMatches(type){
 
-let filtered=allMatches.filter(m=>m.ms===type);
+let filtered=matches.filter(m=>m.status.includes(type));
 
 showMatches(filtered);
 
@@ -187,7 +193,7 @@ document.getElementById("search").addEventListener("input",function(){
 
 let text=this.value.toLowerCase();
 
-let filtered=allMatches.filter(m=>m.name.toLowerCase().includes(text));
+let filtered=matches.filter(m=>m.name.toLowerCase().includes(text));
 
 showMatches(filtered);
 
