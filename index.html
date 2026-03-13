@@ -3,41 +3,72 @@
 <head>
 <title>PRO CRICKET LIVE</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
+
 body{
 background:#0f172a;
 color:white;
 font-family:Arial;
+margin:0;
+padding:0;
 text-align:center;
 }
 
-h1{
+header{
+background:#020617;
+padding:15px;
+font-size:28px;
+font-weight:bold;
 color:#22c55e;
 }
 
-input{
-padding:10px;
-width:80%;
-margin:10px;
-border-radius:8px;
+#search{
+width:90%;
+padding:14px;
+margin:15px;
+border-radius:10px;
 border:none;
+font-size:16px;
 }
 
-button{
-padding:10px 15px;
+.tabs{
+margin-bottom:10px;
+}
+
+.tabs button{
+padding:12px 18px;
 margin:5px;
+border:none;
+border-radius:8px;
+font-size:16px;
 background:#1e293b;
 color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
 }
 
 .match{
 background:#1e293b;
-margin:10px;
-padding:15px;
-border-radius:10px;
+margin:12px;
+padding:18px;
+border-radius:12px;
+text-align:left;
+font-size:16px;
+}
+
+.match h3{
+margin:0;
+font-size:18px;
+color:#22c55e;
+}
+
+.score{
+font-size:20px;
+margin:6px 0;
+}
+
+.status{
+color:#facc15;
 }
 
 .live{
@@ -45,24 +76,34 @@ color:red;
 font-weight:bold;
 }
 
+footer{
+margin-top:20px;
+font-size:14px;
+opacity:0.7;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<h1>🏏 PRO CRICKET LIVE</h1>
+<header>🏏 PRO CRICKET LIVE</header>
 
 <input id="search" placeholder="Search team or match">
 
-<br>
-
+<div class="tabs">
+<button onclick="showMatches(allMatches)">ALL</button>
 <button onclick="filterMatches('live')">LIVE</button>
-<button onclick="filterMatches('upcoming')">UPCOMING</button>
-<button onclick="filterMatches('completed')">RESULT</button>
+<button onclick="filterMatches('fixture')">UPCOMING</button>
+<button onclick="filterMatches('result')">RESULT</button>
+</div>
 
 <div id="matches"></div>
 
-<p>Visitors: <span id="visit">0</span></p>
+<footer>
+Visitors: <span id="visit">0</span>
+</footer>
 
 <script>
 
@@ -72,12 +113,20 @@ let allMatches=[];
 
 async function loadMatches(){
 
+try{
+
 const res=await fetch(API);
 const data=await res.json();
 
-allMatches=data.data;
+allMatches=data.data || [];
 
 showMatches(allMatches);
+
+}catch(e){
+
+document.getElementById("matches").innerHTML="Error loading matches";
+
+}
 
 }
 
@@ -86,16 +135,18 @@ function showMatches(list){
 const box=document.getElementById("matches");
 box.innerHTML="";
 
-if(!list || list.length===0){
-box.innerHTML="<p>No matches found</p>";
+if(list.length===0){
+
+box.innerHTML="<p>No matches available</p>";
 return;
+
 }
 
 list.forEach(m=>{
 
 let score="";
 
-if(m.score && m.score.length>0){
+if(m.score && m.score.length){
 
 let s1=m.score[0];
 let s2=m.score[1];
@@ -112,9 +163,9 @@ box.innerHTML+=`
 
 <h3>${m.name}</h3>
 
-<p>${score}</p>
+<div class="score">${score}</div>
 
-<p>${m.status}</p>
+<div class="status">${m.status}</div>
 
 </div>
 
@@ -126,17 +177,9 @@ box.innerHTML+=`
 
 function filterMatches(type){
 
-if(type==="live"){
-showMatches(allMatches.filter(m=>m.ms==="live"));
-}
+let filtered=allMatches.filter(m=>m.ms===type);
 
-if(type==="upcoming"){
-showMatches(allMatches.filter(m=>m.ms==="fixture"));
-}
-
-if(type==="completed"){
-showMatches(allMatches.filter(m=>m.ms==="result"));
-}
+showMatches(filtered);
 
 }
 
@@ -152,7 +195,7 @@ showMatches(filtered);
 
 loadMatches();
 
-setInterval(loadMatches,20000);
+setInterval(loadMatches,30000);
 
 let v=localStorage.getItem("visit")||0;
 
