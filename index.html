@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<title>PRO Cricket Ultra</title>
+<title>PRO CRICKET ULTRA</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,14 +11,24 @@
 🏏 PRO CRICKET ULTRA
 </header>
 
-<div class="search-box">
-<input id="search" placeholder="Search team or match">
+<div class="tabs">
+
+<button onclick="loadLive()">Live</button>
+<button onclick="loadUpcoming()">Upcoming</button>
+<button onclick="loadResults()">Results</button>
+<button onclick="loadNews()">News</button>
+<button onclick="loadPoints()">Points</button>
+<button onclick="loadStream()">Watch Live</button>
+
 </div>
 
-<h2>Live Matches</h2>
-<div id="matches"></div>
+<input id="search" placeholder="Search Team">
 
-<script src="score.js"></script>
+<div id="content">
+Loading matches...
+</div>
+
+<script src="script.js"></script>
 
 </body>
 </html>
