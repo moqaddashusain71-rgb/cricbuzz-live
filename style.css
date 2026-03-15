@@ -1,84 +1,44 @@
 body{
-font-family: Arial, sans-serif;
+font-family:Arial;
 background:#0f172a;
 color:white;
 margin:0;
 }
 
-/* Header */
-
 header{
 background:#ff3d00;
 padding:15px;
 text-align:center;
-font-size:24px;
-font-weight:bold;
-letter-spacing:1px;
+font-size:22px;
 }
 
-/* Navigation */
-
-nav{
-background:#020617;
+.tabs{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
 padding:10px;
-text-align:center;
 }
 
-nav a{
+.tabs button{
+padding:8px 14px;
+border:none;
+border-radius:8px;
+background:#1e293b;
 color:white;
+}
+
+#search{
 margin:10px;
-text-decoration:none;
-font-weight:bold;
-}
-
-/* Search */
-
-.search-box{
-padding:12px;
-text-align:center;
-}
-
-.search-box input{
-padding:10px;
-width:80%;
+padding:8px;
+width:90%;
 border-radius:8px;
 border:none;
-font-size:16px;
 }
-
-/* Matches */
-
-#matches{
-padding:15px;
-}
-
-/* Match Card */
 
 .card{
 background:#1e293b;
-padding:15px;
-margin-bottom:15px;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.4);
-transition:0.3s;
-}
-
-.card:hover{
-transform:scale(1.02);
-}
-
-/* Button */
-
-button{
-background:#ff3d00;
-border:none;
-color:white;
-padding:8px 14px;
-border-radius:6px;
-cursor:pointer;
-font-weight:bold;
-}
-
-button:hover{
-background:#ff5722;
+margin:10px;
+padding:10px;
+border-radius:10px;
 }
