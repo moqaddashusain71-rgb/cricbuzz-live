@@ -1,4 +1,4 @@
-const API="https://api.cricapi.com/v1/currentMatches?apikey=YOUR_API_KEY";
+const API="https://api.cricapi.com/v1/currentMatches?apikey6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb=;
 
 let matches=[];
 
