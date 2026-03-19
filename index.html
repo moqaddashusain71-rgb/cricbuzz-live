@@ -1,34 +1,186 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PRO CRICKET ULTRA</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>PRO Cricket Ultra</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f172a;
+    color:white;
+}
+
+header{
+    background:#ff3d00;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.nav{
+    display:flex;
+    overflow:auto;
+    background:#1e293b;
+}
+
+.nav div{
+    padding:10px 15px;
+    cursor:pointer;
+    white-space:nowrap;
+}
+
+.nav div:hover{
+    background:#ff3d00;
+}
+
+.search{
+    padding:10px;
+    text-align:center;
+}
+
+.search input{
+    width:80%;
+    padding:10px;
+    border-radius:10px;
+    border:none;
+}
+
+.match{
+    background:#1e293b;
+    margin:10px;
+    padding:12px;
+    border-radius:10px;
+}
+
+.result{
+    color:#00e676;
+    margin-top:5px;
+    font-weight:bold;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-🏏 PRO CRICKET ULTRA
-</header>
+<header>🏏 PRO CRICKET ULTRA</header>
 
-<div class="tabs">
-
-<button onclick="loadLive()">Live</button>
-<button onclick="loadUpcoming()">Upcoming</button>
-<button onclick="loadResults()">Results</button>
-<button onclick="loadNews()">News</button>
-<button onclick="loadPoints()">Points</button>
-<button onclick="loadStream()">Watch Live</button>
-
+<div class="nav">
+<div>Live</div>
+<div>Upcoming</div>
+<div>Results</div>
+<div>News</div>
+<div>Points</div>
+<div>Watch Live</div>
 </div>
 
-<input id="search" placeholder="Search Team">
-
-<div id="content">
-Loading matches...
+<div class="search">
+<input type="text" placeholder="Search Team...">
 </div>
 
-<script src="script.js"></script>
+<!-- MATCH LIST -->
+
+<div class="match">
+New Zealand vs South Africa, 2nd T20I  
+<div class="result">New Zealand won by 68 runs</div>
+</div>
+
+<div class="match">
+New Zealand vs South Africa, 1st T20I  
+<div class="result">South Africa won by 7 wkts</div>
+</div>
+
+<div class="match">
+New Zealand Women vs South Africa Women  
+<div class="result">South Africa Women won by 18 runs</div>
+</div>
+
+<div class="match">
+New Zealand Women vs South Africa Women  
+<div class="result">New Zealand Women won by 80 runs</div>
+</div>
+
+<div class="match">
+Cyprus vs Austria  
+<div class="result">Austria won by 7 wkts</div>
+</div>
+
+<div class="match">
+Bangladesh vs Pakistan, 3rd ODI  
+<div class="result">Bangladesh won by 11 runs</div>
+</div>
+
+<div class="match">
+Wellington vs Auckland  
+<div class="result">Day 2: Stumps - Wellington trail by 40 runs</div>
+</div>
+
+<div class="match">
+Canterbury vs Central Districts  
+<div class="result">Day 2: Stumps - Canterbury lead by 159 runs</div>
+</div>
+
+<div class="match">
+Otago vs Northern Districts  
+<div class="result">Day 2: Stumps - Northern Districts lead by 89 runs</div>
+</div>
+
+<div class="match">
+India A Women vs Sri Lanka A Women  
+<div class="result">India A Women won by 5 wkts</div>
+</div>
+
+<div class="match">
+Bangladesh A Women vs Pakistan A Women  
+<div class="result">Bangladesh A Women won by 54 runs</div>
+</div>
+
+<div class="match">
+Argentina vs Cayman Islands  
+<div class="result">Cayman Islands won by 6 wkts</div>
+</div>
+
+<div class="match">
+Warriors vs Titans  
+<div class="result">No result due to rain</div>
+</div>
+
+<div class="match">
+Dolphins vs Boland  
+<div class="result">Boland won by 9 wkts</div>
+</div>
+
+<div class="match">
+Lions vs Titans  
+<div class="result">Lions won by 120 runs (DLS)</div>
+</div>
+
+<div class="match">
+Western Province vs KwaZulu-Natal Inland  
+<div class="result">KwaZulu-Natal Inland won by 2 wkts</div>
+</div>
+
+<div class="match">
+Border vs Mpumalanga Rhinos  
+<div class="result">Border won by 6 wkts</div>
+</div>
+
+<div class="match">
+Northern Cape vs Border  
+<div class="result">Border won by 47 runs</div>
+</div>
+
+<div class="match">
+South Western Districts vs Limpopo  
+<div class="result">South Western Districts won by 33 runs</div>
+</div>
+
+<div class="match">
+Botswana vs Lesotho  
+<div class="result">Botswana won by 84 runs</div>
+</div>
 
 </body>
 </html>
