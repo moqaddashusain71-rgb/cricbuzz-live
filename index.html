@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>PRO Cricket Ultra</title>
+<title>PRO Cricket Ultra V2</title>
 
 <style>
 body{
@@ -29,10 +29,13 @@ header{
 .nav div{
     padding:10px 15px;
     cursor:pointer;
-    white-space:nowrap;
 }
 
 .nav div:hover{
+    background:#ff3d00;
+}
+
+.active{
     background:#ff3d00;
 }
 
@@ -55,11 +58,9 @@ header{
     border-radius:10px;
 }
 
-.result{
-    color:#00e676;
-    margin-top:5px;
-    font-weight:bold;
-}
+.live{color:#00e676;}
+.upcoming{color:#ffea00;}
+.result{color:#03a9f4;}
 </style>
 </head>
 
@@ -68,119 +69,80 @@ header{
 <header>🏏 PRO CRICKET ULTRA</header>
 
 <div class="nav">
-<div>Live</div>
-<div>Upcoming</div>
-<div>Results</div>
-<div>News</div>
-<div>Points</div>
-<div>Watch Live</div>
+<div onclick="loadMatches('live')" class="active">Live</div>
+<div onclick="loadMatches('upcoming')">Upcoming</div>
+<div onclick="loadMatches('completed')">Results</div>
 </div>
 
 <div class="search">
-<input type="text" placeholder="Search Team...">
+<input type="text" id="searchBox" placeholder="Search Team..." onkeyup="searchMatch()">
 </div>
 
-<!-- MATCH LIST -->
+<div id="matches"></div>
 
-<div class="match">
-New Zealand vs South Africa, 2nd T20I  
-<div class="result">New Zealand won by 68 runs</div>
-</div>
+<script>
 
-<div class="match">
-New Zealand vs South Africa, 1st T20I  
-<div class="result">South Africa won by 7 wkts</div>
-</div>
+const API_KEY = "6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb;
+let allMatches = [];
 
-<div class="match">
-New Zealand Women vs South Africa Women  
-<div class="result">South Africa Women won by 18 runs</div>
-</div>
+async function loadMatches(type){
+    document.getElementById("matches").innerHTML = "Loading...";
 
-<div class="match">
-New Zealand Women vs South Africa Women  
-<div class="result">New Zealand Women won by 80 runs</div>
-</div>
+    let res = await fetch(`https://api.cricapi.com/v1/currentMatches?apikey=${API_KEY}&offset=0`);
+    let data = await res.json();
 
-<div class="match">
-Cyprus vs Austria  
-<div class="result">Austria won by 7 wkts</div>
-</div>
+    allMatches = data.data;
 
-<div class="match">
-Bangladesh vs Pakistan, 3rd ODI  
-<div class="result">Bangladesh won by 11 runs</div>
-</div>
+    displayMatches(type);
+}
 
-<div class="match">
-Wellington vs Auckland  
-<div class="result">Day 2: Stumps - Wellington trail by 40 runs</div>
-</div>
+function displayMatches(type){
+    let container = document.getElementById("matches");
+    container.innerHTML = "";
 
-<div class="match">
-Canterbury vs Central Districts  
-<div class="result">Day 2: Stumps - Canterbury lead by 159 runs</div>
-</div>
+    allMatches.forEach(match => {
 
-<div class="match">
-Otago vs Northern Districts  
-<div class="result">Day 2: Stumps - Northern Districts lead by 89 runs</div>
-</div>
+        if(type === "live" && match.matchStarted && !match.matchEnded){
+            showMatch(match, "live");
+        }
+        else if(type === "completed" && match.matchEnded){
+            showMatch(match, "result");
+        }
+        else if(type === "upcoming" && !match.matchStarted){
+            showMatch(match, "upcoming");
+        }
 
-<div class="match">
-India A Women vs Sri Lanka A Women  
-<div class="result">India A Women won by 5 wkts</div>
-</div>
+    });
+}
 
-<div class="match">
-Bangladesh A Women vs Pakistan A Women  
-<div class="result">Bangladesh A Women won by 54 runs</div>
-</div>
+function showMatch(match, cls){
+    let div = document.createElement("div");
+    div.className = "match";
 
-<div class="match">
-Argentina vs Cayman Islands  
-<div class="result">Cayman Islands won by 6 wkts</div>
-</div>
+    div.innerHTML = `
+    <b>${match.name}</b><br>
+    <span class="${cls}">${match.status}</span>
+    `;
 
-<div class="match">
-Warriors vs Titans  
-<div class="result">No result due to rain</div>
-</div>
+    document.getElementById("matches").appendChild(div);
+}
 
-<div class="match">
-Dolphins vs Boland  
-<div class="result">Boland won by 9 wkts</div>
-</div>
+function searchMatch(){
+    let input = document.getElementById("searchBox").value.toLowerCase();
+    let container = document.getElementById("matches");
+    container.innerHTML = "";
 
-<div class="match">
-Lions vs Titans  
-<div class="result">Lions won by 120 runs (DLS)</div>
-</div>
+    allMatches.forEach(match => {
+        if(match.name.toLowerCase().includes(input)){
+            showMatch(match, "live");
+        }
+    });
+}
 
-<div class="match">
-Western Province vs KwaZulu-Natal Inland  
-<div class="result">KwaZulu-Natal Inland won by 2 wkts</div>
-</div>
+// Default Load
+loadMatches('live');
 
-<div class="match">
-Border vs Mpumalanga Rhinos  
-<div class="result">Border won by 6 wkts</div>
-</div>
-
-<div class="match">
-Northern Cape vs Border  
-<div class="result">Border won by 47 runs</div>
-</div>
-
-<div class="match">
-South Western Districts vs Limpopo  
-<div class="result">South Western Districts won by 33 runs</div>
-</div>
-
-<div class="match">
-Botswana vs Lesotho  
-<div class="result">Botswana won by 84 runs</div>
-</div>
+</script>
 
 </body>
 </html>
