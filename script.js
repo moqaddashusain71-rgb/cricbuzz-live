@@ -1,79 +1,32 @@
-const API="https://api.cricapi.com/v1/currentMatches?apikey=6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
+const API_KEY = "6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb";
 
-let matches=[];
+async function loadMatches() {
+  const container = document.getElementById("matches");
+  container.innerHTML = "Loading...";
 
-async function fetchMatches(){
+  try {
+    const res = await fetch(
+      `https://api.cricapi.com/v1/currentMatches?apikey=${API_KEY}&offset=0`
+    );
+    const data = await res.json();
 
-const container=document.getElementById("content");
+    container.innerHTML = "";
 
-try{
+    data.data.forEach(match => {
+      const div = document.createElement("div");
+      div.className = "match";
 
-const res=await fetch(API);
-const data=await res.json();
+      div.innerHTML = `
+        <h3>${match.name}</h3>
+        <p>${match.status}</p>
+      `;
 
-if(!data.data){
-container.innerHTML="API limit finished or error";
-return;
+      container.appendChild(div);
+    });
+
+  } catch (err) {
+    container.innerHTML = "❌ Error loading matches";
+  }
 }
 
-matches=data.data;
-
-loadLive();
-
-}catch(err){
-
-container.innerHTML="Error loading matches";
-
-}
-
-}
-
-function createCard(match){
-
-return `
-<div class="card">
-
-<h3>${match.name}</h3>
-
-<p>${match.status}</p>
-
-</div>
-`;
-
-}
-
-function loadLive(){
-
-const container=document.getElementById("content");
-
-container.innerHTML="";
-
-matches.forEach(m=>{
-
-if(m.matchStarted){
-container.innerHTML+=createCard(m);
-}
-
-});
-
-}
-
-function loadUpcoming(){
-
-const container=document.getElementById("content");
-
-container.innerHTML="";
-
-matches.forEach(m=>{
-
-if(!m.matchStarted){
-container.innerHTML+=createCard(m);
-}
-
-});
-
-}
-
-fetchMatches();
-
-setInterval(fetchMatches,30000);
+loadMatches();
