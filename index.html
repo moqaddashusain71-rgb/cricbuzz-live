@@ -1,148 +1,48 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PRO Cricket Ultra V2</title>
-
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0f172a;
-    color:white;
-}
-
-header{
-    background:#ff3d00;
-    padding:15px;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
-}
-
-.nav{
-    display:flex;
-    overflow:auto;
-    background:#1e293b;
-}
-
-.nav div{
-    padding:10px 15px;
-    cursor:pointer;
-}
-
-.nav div:hover{
-    background:#ff3d00;
-}
-
-.active{
-    background:#ff3d00;
-}
-
-.search{
-    padding:10px;
-    text-align:center;
-}
-
-.search input{
-    width:80%;
-    padding:10px;
-    border-radius:10px;
-    border:none;
-}
-
-.match{
-    background:#1e293b;
-    margin:10px;
-    padding:12px;
-    border-radius:10px;
-}
-
-.live{color:#00e676;}
-.upcoming{color:#ffea00;}
-.result{color:#03a9f4;}
-</style>
+  <meta charset="UTF-8">
+  <title>PRO Cricket Ultra</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-900 text-white">  <div class="p-4 text-center text-3xl font-bold">
+    🏏 PRO CRICKET ULTRA
+  </div>  <div class="flex justify-center gap-4 mb-6">
+    <button onclick="loadMatches('live')" class="bg-red-500 px-4 py-2 rounded">Live</button>
+    <button onclick="loadMatches('upcoming')" class="bg-blue-500 px-4 py-2 rounded">Upcoming</button>
+    <button onclick="loadMatches('recent')" class="bg-green-500 px-4 py-2 rounded">Results</button>
+  </div>  <div id="matches" class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4"></div>  <script>
+    const API = "https://cricbuzz-live.vercel.app/v1/matches/";
 
-<body>
+    async function loadMatches(type) {
+      document.getElementById('matches').innerHTML = "Loading...";
+      const res = await fetch(API + type);
+      const data = await res.json();
 
-<header>🏏 PRO CRICKET ULTRA</header>
+      const matches = data.typeMatches?.flatMap(t =>
+        t.seriesMatches?.flatMap(s => s.seriesAdWrapper?.matches || [])
+      ) || [];
 
-<div class="nav">
-<div onclick="loadMatches('live')" class="active">Live</div>
-<div onclick="loadMatches('upcoming')">Upcoming</div>
-<div onclick="loadMatches('completed')">Results</div>
-</div>
+      let html = "";
 
-<div class="search">
-<input type="text" id="searchBox" placeholder="Search Team..." onkeyup="searchMatch()">
-</div>
+      matches.forEach(m => {
+        const info = m.matchInfo;
+        const score = m.matchScore;
 
-<div id="matches"></div>
+        html += `
+          <div class="bg-gray-800 p-4 rounded-xl shadow">
+            <h2 class="text-xl font-bold">${info.team1.teamName} vs ${info.team2.teamName}</h2>
+            <p class="text-sm text-gray-400">${info.venueInfo.ground}</p>
+            <p class="mt-2">${score?.team1Score?.inngs1?.runs || '-'} / ${score?.team1Score?.inngs1?.wickets || ''}</p>
+            <p>${score?.team2Score?.inngs1?.runs || '-'} / ${score?.team2Score?.inngs1?.wickets || ''}</p>
+            <p class="text-yellow-400 mt-2">${info.status}</p>
+          </div>
+        `;
+      });
 
-<script>
+      document.getElementById('matches').innerHTML = html;
+    }
 
-const API_KEY = "6b6d143f-b3b8-4a38-97c5-2ba6f5fbb7eb;
-let allMatches = [];
-
-async function loadMatches(type){
-    document.getElementById("matches").innerHTML = "Loading...";
-
-    let res = await fetch(`https://api.cricapi.com/v1/currentMatches?apikey=${API_KEY}&offset=0`);
-    let data = await res.json();
-
-    allMatches = data.data;
-
-    displayMatches(type);
-}
-
-function displayMatches(type){
-    let container = document.getElementById("matches");
-    container.innerHTML = "";
-
-    allMatches.forEach(match => {
-
-        if(type === "live" && match.matchStarted && !match.matchEnded){
-            showMatch(match, "live");
-        }
-        else if(type === "completed" && match.matchEnded){
-            showMatch(match, "result");
-        }
-        else if(type === "upcoming" && !match.matchStarted){
-            showMatch(match, "upcoming");
-        }
-
-    });
-}
-
-function showMatch(match, cls){
-    let div = document.createElement("div");
-    div.className = "match";
-
-    div.innerHTML = `
-    <b>${match.name}</b><br>
-    <span class="${cls}">${match.status}</span>
-    `;
-
-    document.getElementById("matches").appendChild(div);
-}
-
-function searchMatch(){
-    let input = document.getElementById("searchBox").value.toLowerCase();
-    let container = document.getElementById("matches");
-    container.innerHTML = "";
-
-    allMatches.forEach(match => {
-        if(match.name.toLowerCase().includes(input)){
-            showMatch(match, "live");
-        }
-    });
-}
-
-// Default Load
-loadMatches('live');
-
-</script>
-
-</body>
+    loadMatches('live');
+  </script></body>
 </html>
